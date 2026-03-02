@@ -1,55 +1,52 @@
-// Services_Content.jsx  (example – adapt to your design)
+import React, { useMemo, useState } from "react";
+import ServicesCard from "../../../../Cards/ServicesCard.jsx"
+import ServiceModalPackage from "../../../../Forms/ServiceModalPackage.jsx";
 import '../css/Services_Content.css'
-export default function Services_Content({
-    selectedCategory,
-    items = [],
-    loading,
-    error,
-}) {
-    if (loading) return <div className="loading">Loading {selectedCategory}...</div>;
-    if (error) return <div className="error">{error}</div>;
+import BookingForms from "../../../../Forms/BookingForms.jsx";
+import MusicModal from "../../../../Forms/MusicModal.jsx";
+export default function Services_Content({ selectedCategory, items, error }) {
+    const [selected, setSelected] = useState(null);
+    const [bookingItem, setBookingItem] = useState(null);
 
-    if (items.length === 0) {
-        return <p>No {selectedCategory} services available at the moment.</p>;
-    }
+    const handleBook = (item) => {
+        console.log("BOOK:", item);
+    };
+
+    // const isMusicItem =
+    //     String(selected?.category || "").toLowerCase() === "music";
+    const isMusicItem = String(selected?.category || "").toLowerCase() === "music";
 
     return (
-        <div className="services-grid">
-            {items.map((item) => (
-                <div key={item.id} className="service-card">
-                    <img
-                        src={item.img || item.Image || item.photo || "https://via.placeholder.com/400x300"}
-                        alt={item.name}
-                        className="card-image"
+        <section className="scontent">
+            {error && <p className="serr">{error}</p>}
+
+            <div className="cardsgrid">
+                {(items || []).map((item) => (
+                    <ServicesCard
+                        key={item.id}
+                        item={item}
+                        category={selectedCategory}
+                        // onClick={() => setSelected(item)}
+                        onClick={() => setSelected({ ...item, __cardId: item.id })}
+                        onBookClick={() => setSelected(item)}
                     />
-                    <div className="card-body">
-                        <h3>{item.name}</h3>
+                ))}
+            </div>
 
-                        {item.price && (
-                            <div className="price">₪{item.price.toLocaleString()}</div>
-                        )}
-
-                        <p className="description">
-                            {item.description || item.bio || "No description available"}
-                        </p>
-
-                        {/* Optional: show different things based on category */}
-                        {selectedCategory === "decoration" && item.features && (
-                            <ul className="features">
-                                {item.features.map((f, i) => (
-                                    <li key={i}>• {f}</li>
-                                ))}
-                            </ul>
-                        )}
-
-                        {item.rating && (
-                            <div className="rating">★ {item.rating.toFixed(1)}</div>
-                        )}
-
-                        <button>Select / Contact</button>
-                    </div>
-                </div>
-            ))}
-        </div>
+            {selected && (
+                isMusicItem ? (
+                    <MusicModal
+                        item={selected}
+                        itemId={selected.__cardId}
+                        onClose={() => setSelected(null)} />
+                ) : (
+                    <ServiceModalPackage
+                        item={selected}
+                        category={selectedCategory}
+                        onClose={() => setSelected(null)}
+                        onBook={handleBook}
+                    />
+                ))}
+        </section>
     );
 }

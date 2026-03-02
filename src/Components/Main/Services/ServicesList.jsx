@@ -58,7 +58,7 @@ export default function ServicesList({ selectedCategory, title }) {
             {!loading && !error && (
                 <div className="services-list">
                     {services.map((service) => (
-                        <ServiceCard key={service.id} item={service} />
+                        <ServiceCardFunc key={service.id} item={service} />
                     ))}
                     {!services.length && <p>لا يوجد نتائج حالياً.</p>}
                 </div>
@@ -67,7 +67,7 @@ export default function ServicesList({ selectedCategory, title }) {
     );
 }
 
-function ServiceCard({ item }) {
+function ServiceCardFunc({ item }) {
     const {
         name,
         description,
@@ -80,7 +80,7 @@ function ServiceCard({ item }) {
 
     return (
         <div className="service-card">
-            {/* صورة */}
+
             {imageUrl ? (
                 <img src={imageUrl} alt={name} className="card-image" loading="lazy" />
             ) : (
@@ -88,7 +88,7 @@ function ServiceCard({ item }) {
             )}
 
             <div className="card-body">
-                {/* العنوان + التقييم */}
+
                 <div className="card-heading">
                     <h3 className="service-name">{name}</h3>
                     {typeof rating === "number" && (
@@ -96,10 +96,10 @@ function ServiceCard({ item }) {
                     )}
                 </div>
 
-                {/* الوصف */}
+
                 {description && <p className="service-description">{description}</p>}
 
-                {/* التاغز */}
+
                 {!!features.length && (
                     <div className="tags">
                         {features.slice(0, 4).map((t, i) => (
@@ -110,7 +110,7 @@ function ServiceCard({ item }) {
                     </div>
                 )}
 
-                {/* السعر + ملاحظة التوفر */}
+
                 <div className="card-footer">
                     {typeof price === "number" && (
                         <span className="service-price">${price.toLocaleString()}</span>

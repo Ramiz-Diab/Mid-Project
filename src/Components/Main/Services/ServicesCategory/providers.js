@@ -7,7 +7,7 @@ export async function getProvidersByCategory(category) {
     const colRef = collection(db, "Collection");
     const q = query(colRef,
         where("category", "==", category),
-        orderBy("name", "asc"));
+        orderBy("name"));
     const snap = await getDocs(q);
 
     return snap.docs.map(d =>

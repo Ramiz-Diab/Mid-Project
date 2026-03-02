@@ -1,43 +1,111 @@
-/* container */
-.categories-container {
+.st-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 22px;
+}
+
+.st-row {
     display: flex;
     align-items: center;
-    gap: 25px;
+    gap: 14px;
     flex-wrap: wrap;
+    padding: 12px 0 12px;
 }
 
-/* buttons */
-.category-item {
-    display: flex;
+.st-tab {
+    position: relative;
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    background: #f3f5f7;
-    border-radius: 50px;
-    text-decoration: none;
-    color: #444;
-    font-size: 15px;
-    transition: 0.2s ease;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: rgba(18, 18, 45, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    cursor: pointer;
+    color: #fff;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.2px;
+    transition: transform .12s ease, border-color .2s ease, background .2s ease, color .2s ease;
 }
 
-
-/* active tab */
-.category-item.active {
-    color: #a100ff;
-    font-weight: 600;
+.st-tab.active {
+    background: linear-gradient(135deg,
+            rgba(124, 58, 237, 0.35),
+            rgba(34, 211, 238, 0.25));
 }
 
-/* icon */
-.icon {
-    font-size: 20px;
+.st-tab:hover {
+    transform: translateY(-1px);
+    border-color: rgba(34, 211, 238, 0.35);
+    color: #fff;
 }
 
-/* number badge */
-.count {
-    background: white;
-    color: #333;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 600;
+.st-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    line-height: 1;
+    opacity: .9;
+    padding: 0 5px;
+}
+
+.st-text {
+    line-height: 1;
+}
+
+.st-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 22px;
+    min-width: 22px;
+    padding: 0 25px 0 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.10);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 12px;
+    font-weight: 900;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.st-tab.active {
+    color: #fff;
+    border: 0;
+    background: linear-gradient(135deg, rgba(124, 58, 237, .95), rgba(34, 211, 238, .55));
+    box-shadow: 0 14px 40px rgba(124, 58, 237, .28);
+}
+
+.st-tab.active .st-count {
+    background: rgba(0, 0, 0, .20);
+    color: #fff;
+    border-color: rgba(255, 255, 255, .16);
+}
+
+.st-tab.active::after {
+    content: none;
+}
+
+.st-line {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.10);
+    width: 100%;
+}
+
+@media (max-width: 640px) {
+    .st-wrap {
+        padding: 0 16px;
+    }
+
+    .st-row {
+        gap: 10px;
+    }
+
+    .st-tab {
+        font-size: 13px;
+        padding: 9px 12px;
+    }
 }

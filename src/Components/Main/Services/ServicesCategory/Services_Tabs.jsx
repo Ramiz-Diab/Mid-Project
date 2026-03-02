@@ -1,24 +1,26 @@
-import React from 'react'
-// import '../css/Services_Tabs.css'
-import '../css/ServicesAllPage.css'
+import "../css/Services_Tabs.css";
 
 export default function Services_Tabs({ items, selectedCategory, handleCategoryClick }) {
     return (
-        <div>
-            <div className="categories-container">
-                {items.map((item) => (
-                    <div
-                        key={item.key}
-                        onClick={() => handleCategoryClick(item)}
-                        className={`category-item ${selectedCategory === item.key ? "active" : ""
-                            }`}
-                    >
-                        <span className="icon">{item.icon}</span>
-                        <span className="text">{item.name}</span>
-                        {item.count && <span className="count">{item.count}</span>}
-                    </div>
-                ))}
+        <div className="st-wrap">
+            <div className="st-row">
+                {items.map((cat) => {
+                    const active = cat.key === selectedCategory;
+                    return (
+                        <button
+                            key={cat.key}
+                            type="button"
+                            className={active ? "st-tab active" : "st-tab"}
+                            onClick={() => handleCategoryClick(cat)}
+                        >
+                            <span className="st-icon">{cat.icon}</span>
+                            <span className="st-text">{cat.name}</span>
+                            <span className="st-count">{cat.count}</span>
+                        </button>
+                    );
+                })}
             </div>
+            <div className="st-line" />
         </div>
-    )
+    );
 }

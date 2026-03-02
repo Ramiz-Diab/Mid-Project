@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Services_Tabs from '../Components/Main/Services/ServicesCategory/Services_Tabs';
-import Services_Content from '../Components/Main/Services/ServicesCategory/Services_Content';
 import { listenByCategory } from '../Components/Main/Services/ServicesCategory/Services_Category';
-
+import Services_Content from '../Components/Main/Services/ServicesCategory/Services_Content';
+import './css/ServicesPage.css'
 export default function ServicesPage() {
     const location = useLocation();
     const navigate = useNavigate();
@@ -13,13 +13,27 @@ export default function ServicesPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    const [counts, setCounts] = useState({
+        music: 0,
+        decoration: 0,
+        photography: 0,
+        venue: 0,
+    });
+
+    useEffect(() => {
+        setCounts((prev) => ({
+            ...prev,
+            [selectedCategory]: items?.length || 0,
+        }));
+    }, [items, selectedCategory]);
+
     // Category definitions (used for tabs)
     const categories = useMemo(() => [
-        { name: "DJs & Music", icon: "🎵", path: "/music", key: "music", count: 50 },
-        { name: "Decorations", icon: "🪅", path: "/decorations", key: "decoration", count: 30 },
-        { name: "Photographers", icon: "📸", path: "/photographers", key: "photography", count: 25 },
-        { name: "Venues", icon: "🏛️", path: "/venues", key: "venue", count: 20 },
-    ], []);
+        { name: "DJs & Music", icon: "🎵", path: "/music", key: "music", count: counts.music },
+        { name: "Decorations", icon: "🪅", path: "/decorations", key: "decoration", count: counts.decoration },
+        { name: "Photographers", icon: "📸", path: "/photographers", key: "photography", count: counts.photography },
+        { name: "Venues", icon: "🏛️", path: "/venues", key: "venue", count: counts.venue },
+    ], [counts]);
 
     // Get category from URL
     const categoryFromUrl = useMemo(() => {
@@ -32,7 +46,8 @@ export default function ServicesPage() {
         setSelectedCategory(categoryFromUrl);
     }, [categoryFromUrl]);
 
-    // ── Realtime listener for ANY category ───────────────────────
+
+
     useEffect(() => {
         if (!selectedCategory) return;
 
@@ -40,19 +55,30 @@ export default function ServicesPage() {
         setError("");
         setItems([]);
 
-        const unsubscribe = listenByCategory(
-            selectedCategory,
-            (data) => {
-                setItems(data);
-                setLoading(false);
-            },
-            (err) => {
-                setError(err.message || `Failed to load ${selectedCategory} items`);
-                setLoading(false);
-            }
+        const keysToListen =
+            selectedCategory === "music" ? ["music", "DJ"] : [selectedCategory];
+
+        const unsubscribers = keysToListen.map((key) =>
+            listenByCategory(
+                key,
+                (data) => {
+                    setItems((prev) => {
+                        const map = new Map(prev.map((x) => [x.id, x]));
+                        data.forEach((x) => map.set(x.id, x));
+                        return Array.from(map.values());
+                    });
+                    setLoading(false);
+                },
+                (err) => {
+                    setError(err.message || `Failed to load ${key} items`);
+                    setLoading(false);
+                }
+            )
         );
 
-        return () => unsubscribe();
+        return () => {
+            unsubscribers.forEach((u) => u && u());
+        };
     }, [selectedCategory]);
 
     const handleCategoryClick = (cat) => {

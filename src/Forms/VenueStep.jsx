@@ -1,69 +1,86 @@
-import React from "react";
-import './css/Decor&Venue.css'
+import React, { useEffect, useState } from "react";
+import "./css/Decor&Venue.css";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase/config";
 
-const VENUES = [
-    {
-        id: "venue_ballroom",
-        name: "Grand Ballroom",
-        location: "Downtown Manhattan, NY",
-        capacity: 300,
-        amenities: ["Parking", "Stage", "VIP Area"],
-        pricePerHour: 500,
-        img: "https://images.unsplash.com/photo-1521337706264-a414f153a5f5?auto=format&fit=crop&w=1200&q=60",
-    },
-    {
-        id: "venue_rooftop",
-        name: "Rooftop Garden",
-        location: "Brooklyn, NY",
-        capacity: 150,
-        amenities: ["Outdoor", "Bar", "City View"],
-        pricePerHour: 350,
-        img: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=1200&q=60",
-    },
-    {
-        id: "venue_beach",
-        name: "Beachside Pavilion",
-        location: "Long Beach, NY",
-        capacity: 200,
-        amenities: ["Ocean View", "Outdoor", "Photography Spot"],
-        pricePerHour: 400,
-        img: "https://images.unsplash.com/photo-1529634897861-1d7d2f3b2e52?auto=format&fit=crop&w=1200&q=60",
-    },
-];
+export default function VenueStep({ selectedId = "", onSelect }) {
+    const [venues, setVenues] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [errorMsg, setErrorMsg] = useState("");
 
-export default function VenueStep({ selectedId, onSelect }) {
+    useEffect(() => {
+        async function fetchVenues() {
+            try {
+                setLoading(true);
+
+                const colRef = collection(db, "Collection");
+                const snapshot = await getDocs(colRef);
+
+                const allDocs = snapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+
+                const venueDocs = allDocs.filter((doc) => doc.category === "venue");
+                setVenues(venueDocs);
+            } catch (err) {
+                setErrorMsg(err.message || "Failed to load venues");
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchVenues();
+    }, []);
+
+    function pickVenue(v) {
+        if (selectedId === v.id) return onSelect(null);
+        onSelect(v);
+    }
+
+    if (loading) return <p>Loading venues...</p>;
+    if (errorMsg) return <p style={{ color: "red" }}>{errorMsg}</p>;
+
     return (
         <div className="sc">
             <div className="sc-head">
-                <h2 className="sc-title">Select Your Venue</h2>
-                <p className="sc-sub">Choose the perfect location for your event</p>
+                <h2 className="sc-title">Select Venue</h2>
+                <p className="sc-sub">Choose one venue for your event</p>
             </div>
 
             <div className="sc-grid">
-                {VENUES.map((v) => {
-                    const active = selectedId === v.id;
+                {venues.map((v) => {
+                    const isActive = selectedId === v.id;
+
+                    const imageUrl =
+                        v.image ||
+                        v.photoURL ||
+                        "https://img.freepik.com/premium-vector/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available_87543-11093.jpg?w=360";
+
+                    const name = v.name || v.title || "Venue";
+                    const location = v.location || v.city || v.area || "—";
+                    const pricePerHour = v.pricePerHour || v.price || 0;
+                    const capacity = v.capacity || 0;
+
                     return (
                         <button
                             key={v.id}
                             type="button"
-                            className={`sc-card ${active ? "active" : ""}`}
-                            onClick={() => onSelect(v)}
+                            className={`sc-card ${isActive ? "active" : ""}`}
+                            onClick={() => pickVenue(v)}
                         >
-                            <img className="sc-img" src={v.img} alt={v.name} />
+                            <img className="sc-img" src={imageUrl} alt={name} />
+
                             <div className="sc-body">
                                 <div className="sc-row">
-                                    <div className="sc-name">{v.name}</div>
-                                    <div className="sc-price">${v.pricePerHour}/hr</div>
+                                    <div className="sc-name">{name}</div>
+                                    <div className="sc-price">₪{pricePerHour || "—"}/hr</div>
                                 </div>
 
-                                <div className="sc-meta">📍 {v.location}</div>
-                                <div className="sc-meta">👥 Capacity: {v.capacity}</div>
+                                <div className="sc-desc">📍 {location}</div>
+                                <div className="sc-desc">👥 Capacity: {capacity || "—"}</div>
 
-                                <div className="sc-tags">
-                                    {v.amenities.map((a) => (
-                                        <span className="sc-tag" key={a}>{a}</span>
-                                    ))}
-                                </div>
+                                {isActive && <div className="sc-selected">Selected</div>}
                             </div>
                         </button>
                     );
