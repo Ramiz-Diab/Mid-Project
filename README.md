@@ -121,8 +121,8 @@ User gets the final status.
 
 ---
 
-### Homepage
-![Homepage](screenshots/homepage.png)
+## 🖥 Homepage
+<img src="assets/screenshots/homepage.png" width="800" />
 
 ### Services Page
 ![Services](screenshots/services.png)
