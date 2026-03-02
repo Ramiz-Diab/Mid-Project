@@ -87,6 +87,7 @@ export default function ServicesPage() {
     };
 
     return (
+
         <div className="categories-wrapper">
             <h1 className="title">All Event Services</h1>
             <p className="subtitle">Browse our complete catalog of event services</p>
