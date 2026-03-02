@@ -109,8 +109,6 @@ export default function HomePage() {
                 <span>▶</span>
                 <span>in</span>
             </div>
-
-
             <UpcomingEvents mode="allSameDate" />
         </div>
     )
