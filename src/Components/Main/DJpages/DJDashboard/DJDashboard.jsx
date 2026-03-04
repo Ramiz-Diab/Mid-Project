@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
+import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../../../../context/Context';
 import { collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from '../../../../firebase/config';
@@ -34,7 +35,7 @@ export default function DJDashboard() {
 
                 const q = query(
                     collection(db, "BOOKINGS"),
-                    where("djId", "==", djEmail)
+                    where("djEmail", "==", djEmail)
                 );
 
                 const snap = await getDocs(q);
